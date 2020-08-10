@@ -11,13 +11,15 @@ require_relative 'lib/scraped_wikipedia_positionholders'
 require_relative 'lib/wikipedia_candidates_page'
 require_relative 'lib/wikipedia_candidate_row'
 
+url, SECTION = ARGV
+
 # The Wikipedia page with a list of candidates
 class Candidates < WikipediaCandidatesPage
   decorator RemoveNotes
   decorator WikidataIdsDecorator::Links
 
   def wanted_tables
-    noko.css('#Candidates_and_result').xpath('following::table[1]')
+    noko.css(SECTION).xpath('following::table[1]')
   end
 end
 
@@ -28,5 +30,4 @@ class Candidate < WikipediaCandidateRow
   end
 end
 
-url = ARGV.first || abort("Usage: #{$0} <url to scrape>")
 puts Scraped::Wikipedia::PositionHolders.new(url => Candidates).to_csv
