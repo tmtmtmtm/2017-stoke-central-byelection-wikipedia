@@ -56,3 +56,19 @@ bundle exec ruby generate-qs.rb meta.json | tee commands.qs
 ```
 
 Then sent to QuickStatements as https://editgroups.toolforge.org/b/QSv2T/1597048166219/
+
+Step 5: Generate reciprocal 'candidacy' statements
+==================================================
+
+```sparql
+SELECT ?person ?personLabel ?election ?electionLabel
+WHERE {
+  ?election wdt:P31 wd:Q7864918 ; wdt:P726 ?person.
+  MINUS { ?person wdt:P3602 ?election }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
+
+wd sparql mirror-candidacy-to-person.rq | jq -r '.[] | "\(.person.value)\tP3602\t\(.election.value)\tS3452\t\(.election.value)"'
+
+-> QuickStatements as https://editgroups.toolforge.org/b/QSv2T/1597048863387/
+
